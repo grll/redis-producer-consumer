@@ -1,14 +1,24 @@
 import asyncio
-from producer import submit_task, get_redis
+from httpx_consumer_producer import submit_request, get_redis
 
 
 async def main():
     try:
         # Create and await multiple tasks concurrently
         tasks = [
-            submit_task(f"Process1 HIGH task {i}", priority="high")
+            submit_request(
+                "GET",
+                "https://httpbin.org/get",
+                timeout=10,
+                queue="high",
+            )
             if i % 2 == 0
-            else submit_task(f"Process1 LOW task {i}", priority="low")
+            else submit_request(
+                "GET",
+                "https://httpbin.org/get",
+                timeout=10,
+                queue="low",
+            )
             for i in range(5)
         ]
 
