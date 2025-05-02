@@ -1,5 +1,5 @@
 """
-This module defines a consumer / producer pattern for httpx requests with Redis queues.
+A consumer / producer pattern for httpx requests with Redis queues.
 
 You can run this module to spawn a consumer process that will call httpx every
 `tick` seconds like:
@@ -8,14 +8,15 @@ You can run this module to spawn a consumer process that will call httpx every
 python httpx_consumer_producer.py --tick 1
 ```
 
-You can then submit tasks (httpx requests) to the consumer from any other process with:
+You can then submit httpx requests (tasks) to the consumer from any other process with:
 
 ```python
-await submit_task(
+response = await submit_task(
     httpx_request_args=["GET", "https://www.google.com"],
     httpx_request_kwargs={"timeout": 10},
 )
 ```
+
 You can configure the consumer and producer with environment variables like:
 
 ```bash
@@ -23,7 +24,7 @@ You can configure the consumer and producer with environment variables like:
 export HTTPX_CP_REDIS_URL=redis://localhost:6379
 
 # ordered by priority, high first (default: high,low)
-export HTTPX_CP_QUEUES=high,low 
+export HTTPX_CP_QUEUES=high,low
 ```
 """
 
@@ -175,10 +176,10 @@ async def consume(tick: int):
                     response = await client.request(
                         *httpx_request_args, **httpx_request_kwargs
                     )
-                    response.raise_for_status()
                     result["status_code"] = response.status_code
                     result["content"] = response.text
                     result["headers"] = dict(response.headers)
+                    response.raise_for_status()
                 except Exception as e:
                     err = f"Error making httpx request: {e}"
                     log.error(err)
