@@ -1,0 +1,9 @@
+[project]
+name = "redis-producer-consumer"
+version = "0.1.0"
+description = "Most simple and minimalistic example of a cross process Redis Producer consumer pattern"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "redis>=6.0.0",
+]
